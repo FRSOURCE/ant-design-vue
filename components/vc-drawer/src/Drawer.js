@@ -541,27 +541,22 @@ const Drawer = {
        * 在没设定 overflow: auto 或 scroll 时，currentTarget 里获取不到 scrollTop 或 scrollLeft,
        * 预先用 scrollTo 来滚动，如果取出的值跟滚动前取出不同，则 currnetTarget 被设定了 overflow; 否则就是上面这种。
        */
-      const t = currentTarget.scrollTop;
-      const l = currentTarget.scrollLeft;
-      if (currentTarget.scrollTo) {
-        currentTarget.scrollTo(currentTarget.scrollLeft + 1, currentTarget.scrollTop + 1);
-      }
-      const currentT = currentTarget.scrollTop;
-      const currentL = currentTarget.scrollLeft;
-      if (currentTarget.scrollTo) {
-        currentTarget.scrollTo(currentTarget.scrollLeft - 1, currentTarget.scrollTop - 1);
-      }
+      const style = document.defaultView.getComputedStyle(currentTarget);
+      const overflowY = style.overflowY === 'auto' || style.overflowY === 'scroll';
+      const overflowX = style.overflowX === 'auto' || style.overflowX === 'scroll';
+
+      const y = scrollY && overflowY;
+      const x = scrollX && overflowX;
+
       if (
         (isY &&
-          (!scrollY ||
-            !(currentT - t) ||
-            (scrollY &&
+          (!y ||
+            (y &&
               ((currentTarget.scrollTop >= scrollY && differY < 0) ||
                 (currentTarget.scrollTop <= 0 && differY > 0))))) ||
         (isX &&
-          (!scrollX ||
-            !(currentL - l) ||
-            (scrollX &&
+          (!x ||
+            (x &&
               ((currentTarget.scrollLeft >= scrollX && differX < 0) ||
                 (currentTarget.scrollLeft <= 0 && differX > 0)))))
       ) {
